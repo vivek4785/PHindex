@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Parameter Check</title>
+    <style>
+        .container {
+            text-align: center;
+            border: 1px solid black;
+            padding: 20px;
+        }
+
+        /* Style for the input field */
+        #parameter {
+            padding: 5px;
+            width: 200px;
+            margin: 10px;
+        }
+
+        /* Style for the "Check" button */
+        #checkButton {
+            padding: 10px 20px;
+            background-color: #0074d9;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Apply hover effect to the button */
+        #checkButton:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Parameter Check</h1>
+        <form id="parameterForm">
+            <label for="parameter">Enter Parameter (DDMMYY-XXX):</label>
+            <input type="text" id="parameter" placeholder="DDMMYY-XXX" required>
+            <button id="checkButton" type="button" onclick="checkParameter()">Check</button>
+        </form>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function checkParameter() {
+            const parameterInput = document.getElementById("parameter");
+            const resultElement = document.getElementById("result");
+            const parameter = parameterInput.value;
+
+            // Check if the input matches the format "DDMMYY-XXX"
+            const pattern = /^(\d{2})(\d{2})(\d{2})-(\d{3})$/;
+            if (pattern.test(parameter)) {
+                const dayPart = RegExp.$1;
+                const monthPart = RegExp.$2;
+                const yearPart = RegExp.$3;
+                const genderPart = RegExp.$4;
+
+                // Check the format of day, month, and year
+                if (parseInt(dayPart) > 31 || parseInt(monthPart) > 12) {
+                    resultElement.innerText = "Invalid day or month.";
+                    return;
+                }
+
+                // Ask for gender/sex
+                const gender = prompt("Enter gender/sex (F/M):");
+                if (gender.toUpperCase() !== 'F' && gender.toUpperCase() !== 'M') {
+                    resultElement.innerText = "Invalid gender/sex.";
+                    return;
+                }
+
+                // Select +/-/A depending on the century
+                const century = prompt("Select century (+/-/A):");
+                if (century !== '+' && century !== '-' && century !== 'A') {
+                    resultElement.innerText = "Invalid century.";
+                    return;
+                }
+
+                // Odd/even number ==> gender/sex
+                const isEven = genderPart % 2 === 0;
+                if ((isEven && gender.toUpperCase() === 'M') || (!isEven && gender.toUpperCase() === 'F')) {
+                    resultElement.innerText = "Gender/sex is correct.";
+                } else {
+                    resultElement.innerText = "Gender/sex is incorrect.";
+                    return;
+                }
+
+                // Select the numbers after +/-/A from the appropriate range (2...899)
+                const selectedNumbers = prompt("Enter numbers after +/-/A (2...899):");
+                const checkNumber = (parseInt(yearPart) + parseInt(selectedNumbers)) % 26;
+
+                // Check if the check number is 20 (T)
+                if (checkNumber === 20) {
+                    resultElement.innerText += "\nCheck number is: T";
+                } else {
+                    resultElement.innerText += "\nCheck number is not T.";
+                }
+            } else {
+                resultElement.innerText = "Invalid input format. Please use DDMMYY-XXX format.";
+            }
+        }
+    </script>
+</body>
+
+</html>
